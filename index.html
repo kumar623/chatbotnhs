@@ -1,5 +1,3 @@
-
-/* index.html */
 <!doctype html>
 <html lang="en">
 <head>
@@ -28,56 +26,3 @@
   <script src="app.js" type="module"></script>
 </body>
 </html>
-
-/* app.js */
-// Entry point: UI logic and REST calls to Rasa
-const openBtn = document.getElementById('chat-open-btn');
-const chatWindow = document.getElementById('chat-window');
-const bodyEl = document.getElementById('chat-body');
-const inputEl = document.getElementById('chat-input');
-const sendBtn = document.getElementById('chat-send-btn');
-
-const CONFIG = {
-  host:           'https://your-rasa-server.example.com/webhooks/rest/webhook',
-  welcomeMessage: 'Hello – how can I help you today with NHS services?',
-  inactiveMsg:    'Sorry, the chatbot is currently unavailable. Please try again later.'
-};
-
-function appendBubble(text, cls) {
-  const bubble = document.createElement('div');
-  bubble.className = `chat-bubble ${cls}`;
-  bubble.textContent = text;
-  bodyEl.appendChild(bubble);
-  bodyEl.scrollTop = bodyEl.scrollHeight;
-}
-function showBot(text) { appendBubble(text, 'bot'); }
-function showUser(text) { appendBubble(text, 'user'); }
-
-async function sendMessage(text) {
-  showUser(text);
-  inputEl.value = '';
-  try {
-    const res = await fetch(CONFIG.host, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ message: text })
-    });
-    const data = await res.json();
-    data.forEach(msg => showBot(msg.text));
-  } catch (e) {
-    showBot(CONFIG.inactiveMsg);
-    console.error(e);
-  }
-}
-
-openBtn.addEventListener('click', () => {
-  chatWindow.classList.toggle('open');
-  if (chatWindow.classList.contains('open')) showBot(CONFIG.welcomeMessage);
-});
-sendBtn.addEventListener('click', () => {
-  const val = inputEl.value.trim();
-  if (val) sendMessage(val);
-});
-inputEl.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && inputEl.value.trim()) sendMessage(inputEl.value.trim());
-});
