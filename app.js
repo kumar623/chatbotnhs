@@ -18,6 +18,7 @@
     bubble.textContent = text;
     bodyEl.appendChild(bubble);
     bodyEl.scrollTop = bodyEl.scrollHeight;
+    return bubble;
   }
 
   function showBot(text) { appendBubble(text, 'bot'); }
@@ -26,6 +27,13 @@
   async function sendMessage(text) {
     showUser(text);
     inputEl.value = '';
+
+    // Typing indicator
+    const typingBubble = appendBubble('NHS is typing...', 'typing');
+    const delay = Math.floor(Math.random() * 3000) + 1000; // 1–4 sec
+    await new Promise(res => setTimeout(res, delay));
+    typingBubble.remove();
+
     try {
       const response = await fetch(CONFIG.host, {
         method: 'POST',

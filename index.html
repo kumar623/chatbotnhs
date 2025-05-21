@@ -4,22 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="styles.css">
+  <title>NHS Covid Advisor</title>
 </head>
 <body>
-  <!-- Chat trigger button -->
-  <button id="chat-open-btn">
-    <svg width="28" height="28" viewBox="0 0 24 24">
-      <path fill="#fff" d="M12,3A9,9 0 0,1 21,12A9,9 0 0,1 12,21C10.26,21 8.6,20.47 7.2,19.54L3,21L4.46,16.8C3.53,15.4 3,13.74 3,12A9,9 0 0,1 12,3Z"/>
-    </svg>
-  </button>
+  <!-- Chat trigger button with health symbol -->
+  <button id="chat-open-btn" aria-label="Open chat">⚕</button>
 
   <!-- Chat window -->
-  <div id="chat-window">
+  <div id="chat-window" role="dialog" aria-modal="true" aria-labelledby="chat-header">
     <div id="chat-header">NHS Covid Advisor</div>
-    <div id="chat-body"></div>
+    <div id="chat-body" aria-live="polite"></div>
     <div id="chat-input-container">
-      <input id="chat-input" type="text" placeholder="Type a message…" />
-      <button id="chat-send-btn">➤</button>
+      <input id="chat-input" type="text" placeholder="Type a message…" aria-label="Message input" />
+      <button id="chat-send-btn" aria-label="Send message">➤</button>
     </div>
   </div>
 

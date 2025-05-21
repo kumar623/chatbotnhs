@@ -12,6 +12,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
   transition: transform 0.2s ease;
   z-index: 9999;
 }
@@ -84,6 +86,14 @@
 .chat-bubble.bot::before {
   content: "⚕";
   margin-right: 8px;
+}
+.chat-bubble.typing {
+  align-self: flex-start;
+  background: transparent;
+  color: #666;
+  font-style: italic;
+  padding: 0;
+  margin-left: 24px;
 }
 
 @keyframes fadeIn {
