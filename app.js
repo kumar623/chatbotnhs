@@ -1,5 +1,6 @@
 (function() {
   const openBtn = document.getElementById('chat-open-btn');
+  const closeBtn = document.getElementById('chat-close-btn');
   const chatWindow = document.getElementById('chat-window');
   const bodyEl = document.getElementById('chat-body');
   const inputEl = document.getElementById('chat-input');
@@ -7,27 +8,33 @@
 
   const DUMMY_TOPICS = ['Vaccination', 'Book Appointment', 'Symptoms Checker', 'Find GP'];
 
+  function formatTime(date) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
   function appendBubble(text, cls) {
     const bubble = document.createElement('div');
     bubble.className = `chat-bubble ${cls}`;
-    bubble.textContent = text;
+    const msg = document.createElement('span');
+    msg.textContent = text;
+    bubble.appendChild(msg);
+    const timestamp = document.createElement('span');
+    timestamp.className = 'timestamp';
+    timestamp.textContent = formatTime(new Date());
+    bubble.appendChild(timestamp);
     bodyEl.appendChild(bubble);
     bodyEl.scrollTop = bodyEl.scrollHeight;
     return bubble;
   }
 
-  function showBot(text) {
-    appendBubble(text, 'bot');
-  }
-  function showUser(text) {
-    appendBubble(text, 'user');
-  }
+  function showBot(text) { appendBubble(text, 'bot'); }
+  function showUser(text) { appendBubble(text, 'user'); }
 
   function showQuickReplies(options) {
     const container = document.createElement('div');
     container.className = 'quick-replies';
     options.forEach(opt => {
-      const chip = document.createElement('div');
+      const chip = document.createElement('button');
       chip.className = 'quick-reply';
       chip.textContent = opt;
       chip.onclick = () => {
@@ -42,7 +49,6 @@
   }
 
   function handleMessage(text, isQuick = false) {
-    // Dummy responses for demo
     let response = '';
     switch (text) {
       case 'Vaccination':
@@ -58,28 +64,51 @@
         response = 'You can find registered GPs via the NHS website: https://www.nhs.uk/service-search';
         break;
       default:
-        response = 'I'm sorry, I can only show demo responses right now.';
+        response = 'I\'m sorry, I can only show demo responses right now.';
     }
-    // Typing indicator demo
     const typing = appendBubble('NHS Health Assistant is typing...', 'typing');
-    const delay = Math.random() * 2000 + 1000;
     setTimeout(() => {
       typing.remove();
       showBot(response);
-      // After initial welcome, show quick replies
       if (!isQuick) showQuickReplies(DUMMY_TOPICS);
-    }, delay);
+    }, Math.random() * 2000 + 1000);
+  }
+
+  function trapFocus(e) {
+    const focusable = chatWindow.querySelectorAll('button, input');
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.key === 'Tab') {
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault(); last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault(); first.focus();
+        }
+      }
+    }
+  }
+
+  function openChat() {
+    chatWindow.classList.add('open');
+    showBot('Welcome to NHS Health Assistant! How can I help you today?');
+    showQuickReplies(DUMMY_TOPICS);
+    inputEl.focus();
+    document.addEventListener('keydown', trapFocus);
+  }
+
+  function closeChat() {
+    chatWindow.classList.remove('open');
+    openBtn.focus();
+    document.removeEventListener('keydown', trapFocus);
   }
 
   openBtn.addEventListener('click', () => {
-    const isOpen = chatWindow.classList.toggle('open');
-    if (isOpen) {
-      showBot('Welcome to NHS Health Assistant! How can I help you today?');
-      showQuickReplies(DUMMY_TOPICS);
-      inputEl.focus();
-    }
-    openBtn.setAttribute('aria-expanded', isOpen);
+    openChat();
   });
+  closeBtn.addEventListener('click', closeChat);
 
   sendBtn.addEventListener('click', () => {
     const val = inputEl.value.trim();

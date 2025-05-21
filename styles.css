@@ -1,3 +1,13 @@
+:root {
+  --primary: #005eb8;
+  --secondary: #41b6e6;
+  --background: rgba(255, 255, 255, 0.9);
+  --bubble-user: #e1f5fe;
+  --bubble-bot: #ffffff;
+  --text-color: #212121;
+  --typing-color: #666;
+}
+/* Glassmorphic floating chat button & window */
 #chat-open-btn {
   position: fixed;
   bottom: 24px;
@@ -5,7 +15,7 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #005eb8, #41b6e6);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   border: none;
   cursor: pointer;
@@ -27,7 +37,7 @@
   right: 24px;
   width: 360px;
   height: 600px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--background);
   backdrop-filter: blur(12px);
   border-radius: 16px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
@@ -45,12 +55,23 @@
 }
 
 #chat-header {
-  background: linear-gradient(135deg, #005eb8, #41b6e6);
+  position: relative;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: #fff;
   padding: 14px 20px;
   font-size: 1.2rem;
   font-weight: 600;
   text-align: center;
+}
+#chat-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 
 #chat-body {
@@ -69,31 +90,48 @@
   border-radius: 20px;
   font-size: 0.95rem;
   line-height: 1.4;
-  animation: fadeIn 0.3s ease;
+  color: var(--text-color);
 }
 .chat-bubble.user {
   align-self: flex-end;
-  background: #e1f5fe;
-  color: #212121;
-  border-bottom-right-radius: 4px;
+  background: var(--bubble-user);
+  animation: slideInRight 0.3s ease;
+}
+.chat-bubble.user .timestamp {
+  margin-left: 8px;
+  font-size: 0.75rem;
+  color: #888;
 }
 .chat-bubble.bot {
   align-self: flex-start;
-  background: #ffffff;
-  color: #212121;
-  border-bottom-left-radius: 4px;
+  background: var(--bubble-bot);
+  animation: slideInLeft 0.3s ease;
 }
 .chat-bubble.bot::before {
   content: "⚕";
   margin-right: 6px;
 }
+.chat-bubble.bot .timestamp {
+  margin-left: 8px;
+  font-size: 0.75rem;
+  color: #888;
+}
 .chat-bubble.typing {
   align-self: flex-start;
   background: transparent;
-  color: #666;
+  color: var(--typing-color);
   font-style: italic;
   padding: 0;
   margin-left: 30px;
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px);} 
+  to   { opacity: 1; transform: translateX(0);}  
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px);} 
+  to   { opacity: 1; transform: translateX(0);}  
 }
 
 .quick-replies {
@@ -103,7 +141,7 @@
   margin-top: 8px;
 }
 .quick-reply {
-  background: #005eb8;
+  background: var(--primary);
   color: #fff;
   padding: 6px 12px;
   border-radius: 16px;
@@ -112,12 +150,7 @@
   transition: background 0.2s ease;
 }
 .quick-reply:hover {
-  background: #004c96;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  background: var(--secondary);
 }
 
 #chat-input-container {
@@ -141,7 +174,7 @@
   margin-left: 10px;
   cursor: pointer;
   font-size: 1.4rem;
-  color: #005eb8;
+  color: var(--primary);
   transition: transform 0.2s ease;
 }
 #chat-send-btn:active {
