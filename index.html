@@ -4,22 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="styles.css">
-  <title>NHS Covid Advisor</title>
+  <title>NHS Health Assistant</title>
 </head>
 <body>
-  <!-- Chat trigger button with health symbol -->
   <button id="chat-open-btn" aria-label="Open chat">⚕</button>
-
-  <!-- Chat window -->
   <div id="chat-window" role="dialog" aria-modal="true" aria-labelledby="chat-header">
-    <div id="chat-header">NHS Covid Advisor</div>
+    <div id="chat-header">NHS Health Assistant</div>
     <div id="chat-body" aria-live="polite"></div>
     <div id="chat-input-container">
-      <input id="chat-input" type="text" placeholder="Type a message…" aria-label="Message input" />
+      <input id="chat-input" type="text" placeholder="Ask me about NHS services…" aria-label="Message input" />
       <button id="chat-send-btn" aria-label="Send message">➤</button>
     </div>
   </div>
-
   <script src="app.js"></script>
 </body>
 </html>
