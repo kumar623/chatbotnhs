@@ -1,20 +1,83 @@
-<!DOCTYPE html>
+
+/* index.html */
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NHS Chatbot</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>NHS Chatbot</h1>
-    <div id="chat-window"></div>
-    <form id="chat-form">
-      <input id="chat-input" type="text" placeholder="Ask a question…" autocomplete="off" />
-      <button type="submit">Send</button>
-    </form>
+  <!-- Chat trigger button -->
+  <button id="chat-open-btn">
+    <svg width="28" height="28" viewBox="0 0 24 24">
+      <path fill="#fff" d="M12,3A9,9 0 0,1 21,12A9,9 0 0,1 12,21C10.26,21 8.6,20.47 7.2,19.54L3,21L4.46,16.8C3.53,15.4 3,13.74 3,12A9,9 0 0,1 12,3Z"/>
+    </svg>
+  </button>
+
+  <!-- Chat window -->
+  <div id="chat-window">
+    <div id="chat-header">NHS Covid Advisor</div>
+    <div id="chat-body"></div>
+    <div id="chat-input-container">
+      <input id="chat-input" type="text" placeholder="Type a message…" />
+      <button id="chat-send-btn">➤</button>
+    </div>
   </div>
-  <script src="app.js"></script>
+
+  <script src="app.js" type="module"></script>
 </body>
 </html>
+
+/* app.js */
+// Entry point: UI logic and REST calls to Rasa
+const openBtn = document.getElementById('chat-open-btn');
+const chatWindow = document.getElementById('chat-window');
+const bodyEl = document.getElementById('chat-body');
+const inputEl = document.getElementById('chat-input');
+const sendBtn = document.getElementById('chat-send-btn');
+
+const CONFIG = {
+  host:           'https://your-rasa-server.example.com/webhooks/rest/webhook',
+  welcomeMessage: 'Hello – how can I help you today with NHS services?',
+  inactiveMsg:    'Sorry, the chatbot is currently unavailable. Please try again later.'
+};
+
+function appendBubble(text, cls) {
+  const bubble = document.createElement('div');
+  bubble.className = `chat-bubble ${cls}`;
+  bubble.textContent = text;
+  bodyEl.appendChild(bubble);
+  bodyEl.scrollTop = bodyEl.scrollHeight;
+}
+function showBot(text) { appendBubble(text, 'bot'); }
+function showUser(text) { appendBubble(text, 'user'); }
+
+async function sendMessage(text) {
+  showUser(text);
+  inputEl.value = '';
+  try {
+    const res = await fetch(CONFIG.host, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ message: text })
+    });
+    const data = await res.json();
+    data.forEach(msg => showBot(msg.text));
+  } catch (e) {
+    showBot(CONFIG.inactiveMsg);
+    console.error(e);
+  }
+}
+
+openBtn.addEventListener('click', () => {
+  chatWindow.classList.toggle('open');
+  if (chatWindow.classList.contains('open')) showBot(CONFIG.welcomeMessage);
+});
+sendBtn.addEventListener('click', () => {
+  const val = inputEl.value.trim();
+  if (val) sendMessage(val);
+});
+inputEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && inputEl.value.trim()) sendMessage(inputEl.value.trim());
+});
